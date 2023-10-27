@@ -31,10 +31,27 @@ std::string GetCpuInfo()
 		return cpuname;
 }
 
+std::wstring GetGPU()
+{
+	IDXGIFactory* factory = nullptr;
+	if (!SUCCEEDED(CreateDXGIFactory(__uuidof(IDXGIFactory), (void**)&factory)) && factory)
+		return L"";
+	IDXGIAdapter* adapter = nullptr;
+	if (!SUCCEEDED(factory->EnumAdapters(0, &adapter)) && adapter)
+		return L"";
+	DXGI_ADAPTER_DESC adapterdesc;
+	if (!SUCCEEDED(adapter->GetDesc(&adapterdesc)))
+		return L"";
+	return adapterdesc.Description;
 
+	adapter->Release();
+	factory->Release();
+
+}
 void main()
 {
 	
 
 	std::cout << GetCpuInfo() << std::endl;
+	std::wcout << GetGPU() << std::endl;
 }
