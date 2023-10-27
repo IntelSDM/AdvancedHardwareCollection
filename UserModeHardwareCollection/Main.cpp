@@ -48,10 +48,17 @@ std::wstring GetGPU()
 	factory->Release();
 
 }
+std::string GetTotalMemory()
+{
+	MEMORYSTATUSEX status;
+	status.dwLength = sizeof(status);
+	if (!GlobalMemoryStatusEx(&status))
+		return "";
+		return std::to_string((status.ullTotalPhys / (1024 * 1024)));
+}
 void main()
 {
-	
-
 	std::cout << GetCpuInfo() << std::endl;
 	std::wcout << GetGPU() << std::endl;
+	std::cout << GetTotalMemory() << std::endl;
 }
