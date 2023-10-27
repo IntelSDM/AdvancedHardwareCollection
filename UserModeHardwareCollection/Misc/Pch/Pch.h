@@ -9,3 +9,5 @@
 #include <fstream>
 #include <list>
 #include <map>
+#include <array>
+#include <intrin.h>
