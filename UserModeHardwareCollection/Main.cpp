@@ -30,7 +30,7 @@ std::string GetCpuInfo()
 	}
 		return cpuname;
 }
-
+// This is more or less a proof of concept, We will always end up using a renderer for the GUI, D2D1, D3D11, OpenGL and all of them will provide the GPU name securely.
 std::wstring GetGPU()
 {
 	IDXGIFactory* factory = nullptr;
