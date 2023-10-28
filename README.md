@@ -1,1 +1,1 @@
-# UserModeHardwareCollection
+# Advanced Hardware Collection
