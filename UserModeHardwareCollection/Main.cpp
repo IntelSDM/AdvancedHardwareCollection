@@ -2,9 +2,11 @@
 #include <Windows.h>
 #include <dxgi.h>
 #include <tchar.h>
-
 #pragma comment(lib, "dxgi.lib")
 #include "SMBIOS.h"
+#include "WindowsUtilities.h"
+
+
 std::string GetCpuInfo()
 {
 		std::array<int, 4> integerbuffer;
@@ -62,6 +64,7 @@ std::string GetTotalMemory()
 
 void main()
 {
+	
 	std::cout << GetCpuInfo() << std::endl;
 	std::wcout << GetGPU() << std::endl;
 	std::cout << GetTotalMemory() << std::endl;
@@ -75,5 +78,6 @@ void main()
 	{
 		std::cout << str << std::endl;
 	}
-
+	
+	
 }

@@ -24,12 +24,18 @@
     <ClCompile Include="SMBIOS.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Misc\WindowsUtilities.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Misc\Pch\Pch.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SMBIOS.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Misc\WindowsUtilities.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
