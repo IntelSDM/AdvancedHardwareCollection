@@ -62,7 +62,7 @@ std::string GetTotalMemory()
 }
 std::vector<std::string> GetDriveSerialNumbers() 
 {
-	std::vector<std::string> serialnumbers;
+	std::vector<std::string> ret;
 	int drivenumber = 0;
 	while (true) 
 	{
@@ -104,12 +104,12 @@ std::vector<std::string> GetDriveSerialNumbers()
 		if (serialnumberoffset != 0)
 		{
 			const char* serialnumber = reinterpret_cast<const char*>(buffer.get() + serialnumberoffset);
-			serialnumbers.push_back(serialnumber);
+			ret.push_back(serialnumber);
 		}
 		drivenumber += 1;
 	}
 
-	return serialnumbers;
+	return ret;
 }
 
 void main()
