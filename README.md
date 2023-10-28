@@ -8,6 +8,10 @@ This project is an alternative to using WMIC for grabbing important hardware inf
 The issue with grabbing hardware from windows as a usermode program is just how easy it is to manipulate the hardware values as you're at the mercy of subsystems, drivers and various interfaces. So we want to raise the barrier for anti platform shenanigans.
 
 ## Images
+<p align="left">
+  <img src="./Images/1.png"
+    style="width: 85%;" />
+</p>
 
 ## Features
 * CPU
