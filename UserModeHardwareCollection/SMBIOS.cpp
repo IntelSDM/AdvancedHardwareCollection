@@ -32,35 +32,42 @@ RawSMBIOSData* GetRawData()
 }
 
 
-SMBIOSStruct* GetNextStruct(SMBIOSStruct* curStruct) {
+SMBIOSStruct* GetNextStruct(SMBIOSStruct* curStruct)
+{
 	char* strings_begin = (char*)curStruct + curStruct->Length;
 	char* next_strings = strings_begin + 1;
-	while (*strings_begin != NULL || *next_strings != NULL) {
+	while (*strings_begin != NULL || *next_strings != NULL)
+	{
 		++strings_begin;
 		++next_strings;
 	}
 	return (SMBIOSStruct*)(next_strings + 1);
 }
 
-std::vector<SMBIOSStruct*> GetStructureTable(RawSMBIOSData* rawData) {
+std::vector<SMBIOSStruct*> GetStructureTable(RawSMBIOSData* rawdata) 
+{
 	std::vector<SMBIOSStruct*> structure_table;
-	SMBIOSStruct* curStruct = (SMBIOSStruct*)rawData->SMBIOSTableData;
-	while ((char*)curStruct < (char*)rawData + rawData->Length) {
+	SMBIOSStruct* curStruct = (SMBIOSStruct*)rawdata->SMBIOSTableData;
+	while ((char*)curStruct < (char*)rawdata + rawdata->Length) 
+	{
 		structure_table.push_back(curStruct);
 		curStruct = GetNextStruct(curStruct);
 	}
 	return structure_table;
 }
-std::vector<std::string> ConvertSMBIOSString(SMBIOSStruct* curStruct) {
+std::vector<std::string> ConvertSMBIOSString(SMBIOSStruct* curStruct) 
+{
 	std::vector<std::string> strings;
 	std::string res = "";
 	strings.push_back(res);
 	char* cur_char = (char*)curStruct + curStruct->Length;
 	SMBIOSStruct* next_struct = GetNextStruct(curStruct);
 
-	while (cur_char < (char*)next_struct) {
+	while (cur_char < (char*)next_struct)
+	{
 		res.push_back(*cur_char);
-		if (*cur_char == NULL) {
+		if (*cur_char == NULL) 
+		{
 			strings.push_back(res);
 			res = "";
 		}
@@ -68,63 +75,53 @@ std::vector<std::string> ConvertSMBIOSString(SMBIOSStruct* curStruct) {
 	}
 	return strings;
 }
-void GetPhysicalMemoryInformation(SMBIOSPhysicalMemory* curStruct, RawSMBIOSData* rawData) {
+void GetPhysicalMemoryInformation(SMBIOSPhysicalMemory* curStruct, RawSMBIOSData* rawdata)
+{
 	std::vector<std::string> strings = ConvertSMBIOSString(curStruct);
 
 	if ((int)curStruct->Size == 0)
 		return;
 
-//	std::cout << "Physics Memory Array Information" << std::endl;
-
-	if (rawData->SMBIOSMajorVersion < 2 || (rawData->SMBIOSMajorVersion == 2 && rawData->SMBIOSMinorVersion < 1))
+	if (rawdata->SMBIOSMajorVersion < 2 || (rawdata->SMBIOSMajorVersion == 2 && rawdata->SMBIOSMinorVersion < 1))
 	{
 		return;
 	}
-	
-//	std::cout << "\tSize: " << (int)curStruct->Size << std::endl;
 
-//	std::cout << "\tDevice Locator: " << strings[curStruct->DeviceLocator] << std::endl;
-
-	//std::cout << "\tBank Locator: " << strings[curStruct->BankLocator] << std::endl;
-	PhysicalMemoryInformation.push_back(std::to_string((int)curStruct->Size));
+	PhysicalMemoryInformation.push_back(std::to_string((int)curStruct->Size) + "mb");
 	PhysicalMemoryInformation.push_back(strings[curStruct->BankLocator]);
 
-	if (rawData->SMBIOSMajorVersion == 2 && rawData->SMBIOSMinorVersion < 3) {
+	if (rawdata->SMBIOSMajorVersion == 2 && rawdata->SMBIOSMinorVersion < 3) {
 		std::cout << std::endl;
 		return;
 	}
 	PhysicalMemoryInformation.push_back(strings[curStruct->SerialNumber]);
 	PhysicalMemoryInformation.push_back(strings[curStruct->AssetTag]);
 	PhysicalMemorySerials.push_back(strings[curStruct->SerialNumber]);
-	PhysicalMemoryInformation.push_back("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"); // just a seperator
-//	std::cout << "\tSerial Number: " << strings[curStruct->SerialNumber] << std::endl;
-	//std::cout << "\tAsset Tag: " << strings[curStruct->AssetTag] << std::endl;
+	PhysicalMemoryInformation.push_back("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"); // just a seperator for visibility
 
-	if (rawData->SMBIOSMajorVersion == 2 && rawData->SMBIOSMinorVersion < 6) {
+	if (rawdata->SMBIOSMajorVersion == 2 && rawdata->SMBIOSMinorVersion < 6) {
 		return;
 	}
 }
-void GetBaseBoardInformation(SMBIOSBaseBoard* curStruct, RawSMBIOSData* rawData) {
+void GetBaseBoardInformation(SMBIOSBaseBoard* curStruct, RawSMBIOSData* rawdata) 
+{
 	std::vector<std::string> strings = ConvertSMBIOSString(curStruct);
-	//std::cout << "Baseboard Information" << std::endl;
-
-//	std::cout << "\tManufacturer: " << strings[curStruct->Manufacturer] << std::endl;
-//	std::cout << "\tProduct: " << strings[curStruct->Product] << std::endl;
-//	std::cout << "\tSerial Number: " << strings[curStruct->SerialNumber] << std::endl;
 	BaseBoardSerial = strings[curStruct->SerialNumber] + strings[curStruct->Product];  // different products could have same serial number, just a better way to deal with this.
 	BaseBoardInformation.push_back(strings[curStruct->Manufacturer]);
 	BaseBoardInformation.push_back(strings[curStruct->Product]);
 	BaseBoardInformation.push_back(strings[curStruct->SerialNumber]);
 
 }
-void ConvertData(RawSMBIOSData* rawData, int id) {
-	std::vector<SMBIOSStruct*> structureTable = GetStructureTable(rawData);
-	switch (structureTable[id]->Type) {
+void ConvertData(RawSMBIOSData* rawdata, int id) 
+{
+	std::vector<SMBIOSStruct*> structureTable = GetStructureTable(rawdata);
+	switch (structureTable[id]->Type) 
+	{
 	case 2:
-		GetBaseBoardInformation((SMBIOSBaseBoard*)structureTable[id], rawData);
+		GetBaseBoardInformation((SMBIOSBaseBoard*)structureTable[id], rawdata);
 		break;
 	case 17:
-		GetPhysicalMemoryInformation((SMBIOSPhysicalMemory*)structureTable[id], rawData);
+		GetPhysicalMemoryInformation((SMBIOSPhysicalMemory*)structureTable[id], rawdata);
 		break;
 	}
 }

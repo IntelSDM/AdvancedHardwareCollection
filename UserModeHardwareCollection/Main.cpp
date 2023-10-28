@@ -68,7 +68,7 @@ void main()
 	InitSMBIOS();
 	for (std::string str : BaseBoardInformation)
 	{
-			std::cout << str << std::endl;
+		std::cout << str << std::endl;
 	}
 	std::cout << std::endl;
 	for (std::string str : PhysicalMemoryInformation)
