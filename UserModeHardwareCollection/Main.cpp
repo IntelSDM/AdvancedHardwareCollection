@@ -4,7 +4,6 @@
 #include <tchar.h>
 #pragma comment(lib, "dxgi.lib")
 #include "SMBIOS.h"
-#include "WindowsUtilities.h"
 
 
 std::string GetCpuInfo()
