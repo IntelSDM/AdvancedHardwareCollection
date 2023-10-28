@@ -61,6 +61,57 @@ std::string GetTotalMemory()
 		return "";
 		return std::to_string((status.ullTotalPhys / (1024 * 1024)));
 }
+std::vector<std::string> GetDriveSerialNumbers() 
+{
+	std::vector<std::string> serialnumbers;
+	int drivenumber = 0;
+	while (true) 
+	{
+		std::wstring path = L"\\\\.\\PhysicalDrive" + std::to_wstring(drivenumber);
+
+		// Get a handle to the physical drive
+		HANDLE h = CreateFileW(path.c_str(), 0, FILE_SHARE_READ | FILE_SHARE_WRITE, NULL, OPEN_EXISTING, 0, NULL);
+
+		if (h == INVALID_HANDLE_VALUE) // End of drives
+			break;
+		
+
+		// Automatic Cleanup, Smart Pointers
+		std::unique_ptr<std::remove_pointer<HANDLE>::type, void(*)(HANDLE)> hDevice{ h, [](HANDLE handle) { CloseHandle(handle); } };
+
+		STORAGE_PROPERTY_QUERY storagepropertyquery{};
+		storagepropertyquery.PropertyId = StorageDeviceProperty;
+		storagepropertyquery.QueryType = PropertyStandardQuery;
+
+		STORAGE_DESCRIPTOR_HEADER storagedescriptorheader{};
+
+		DWORD bytesret = 0;
+		if (!DeviceIoControl(hDevice.get(), IOCTL_STORAGE_QUERY_PROPERTY, &storagepropertyquery, sizeof(STORAGE_PROPERTY_QUERY),&storagedescriptorheader, sizeof(STORAGE_DESCRIPTOR_HEADER), &bytesret, NULL))
+			continue;
+		
+
+		const DWORD buffersize = storagedescriptorheader.Size;
+		std::unique_ptr<BYTE[]> buffer{ new BYTE[buffersize]{} };
+
+		
+		if (!DeviceIoControl(hDevice.get(), IOCTL_STORAGE_QUERY_PROPERTY, &storagepropertyquery, sizeof(STORAGE_PROPERTY_QUERY),buffer.get(), buffersize, &bytesret, NULL)) 
+			continue;
+		
+
+		// Read the serial number out of the output buffer
+		STORAGE_DEVICE_DESCRIPTOR* devicedescriptor = reinterpret_cast<STORAGE_DEVICE_DESCRIPTOR*>(buffer.get());
+		const DWORD serialnumberoffset = devicedescriptor->SerialNumberOffset;
+
+		if (serialnumberoffset != 0)
+		{
+			const char* serialnumber = reinterpret_cast<const char*>(buffer.get() + serialnumberoffset);
+			serialnumbers.push_back(serialnumber);
+		}
+		drivenumber += 1;
+	}
+
+	return serialnumbers;
+}
 
 void main()
 {
@@ -77,6 +128,12 @@ void main()
 	for (std::string str : PhysicalMemoryInformation)
 	{
 		std::cout << str << std::endl;
+	}
+
+	std::cout << "Drive Serial Numbers:\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~" << std::endl;
+	for (const std::string& serialnum : GetDriveSerialNumbers())
+	{
+		std::cout << serialnum << std::endl;
 	}
 	
 	
