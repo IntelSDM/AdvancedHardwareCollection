@@ -2,7 +2,11 @@
 #include <Windows.h>
 #include <dxgi.h>
 #include <tchar.h>
+#include <iphlpapi.h>  
+
 #pragma comment(lib, "dxgi.lib")
+#pragma comment(lib, "iphlpapi.lib")
+
 #include "SMBIOS.h"
 
 
@@ -52,6 +56,40 @@ std::wstring GetGPU()
 	factory->Release();
 
 }
+std::vector<std::string> GetMacAddresses() 
+{
+	std::vector<std::string> ret;
+	DWORD buffer = 0;
+
+	if (GetAdaptersInfo(NULL, &buffer) == ERROR_BUFFER_OVERFLOW)
+	{
+		PIP_ADAPTER_INFO adapterinfo = (PIP_ADAPTER_INFO)malloc(buffer);
+
+		if (adapterinfo) {
+			if (GetAdaptersInfo(adapterinfo, &buffer) == ERROR_SUCCESS)
+			{
+				PIP_ADAPTER_INFO pipadapterinfo = adapterinfo;
+				while (pipadapterinfo) {
+					std::string mac;
+					for (int i = 0; i < pipadapterinfo->AddressLength; i++)
+					{
+						char buffer[3];
+						if (i > 0) mac += ":";
+						sprintf_s(buffer, "%02X", pipadapterinfo->Address[i]);
+						mac += buffer;
+					}
+					ret.push_back(mac);
+					pipadapterinfo = pipadapterinfo->Next;
+				}
+			}
+			free(adapterinfo);  
+		}
+	}
+
+	return ret;
+}
+
+
 std::string GetTotalMemory()
 {
 	MEMORYSTATUSEX status;
@@ -133,6 +171,10 @@ void main()
 	for (const std::string& serialnum : GetDriveSerialNumbers())
 	{
 		std::cout << serialnum << std::endl;
+	}
+	for (std::string str : GetMacAddresses())
+	{
+		std::cout << str << std::endl;
 	}
 	
 	
