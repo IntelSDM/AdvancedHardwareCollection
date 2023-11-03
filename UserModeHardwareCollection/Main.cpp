@@ -65,11 +65,13 @@ std::vector<std::string> GetMacAddresses()
 	{
 		PIP_ADAPTER_INFO adapterinfo = (PIP_ADAPTER_INFO)malloc(buffer);
 
-		if (adapterinfo) {
+		if (adapterinfo)
+		{
 			if (GetAdaptersInfo(adapterinfo, &buffer) == ERROR_SUCCESS)
 			{
 				PIP_ADAPTER_INFO pipadapterinfo = adapterinfo;
-				while (pipadapterinfo) {
+				while (pipadapterinfo) 
+				{
 					std::string mac;
 					for (int i = 0; i < pipadapterinfo->AddressLength; i++)
 					{
