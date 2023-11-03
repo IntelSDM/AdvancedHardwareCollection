@@ -32,7 +32,9 @@ The issue with grabbing hardware from windows as a usermode program is just how 
   * Manufacturer
 * Physical Disk Drives
   * Serial Numbers
- 
+* Mac
+  * All Mac Addresses
+
 ## Explaining Functionality
 CPU: We grab the CPU details through the CPUID function to retrieve the first 4 tables which we use the 1,2,3 tables which contain the Manufacturer, Model, Speed. This in theory would be extremely easy to hook but the way the data is handled just gives it an edge, Its also much more platform independant than WMIC.
 <br>
