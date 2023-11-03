@@ -5,9 +5,13 @@ Normally when gathering hardware for windows systems we tend to use [WMIC](https
 <br>
 This project is an alternative to using WMIC for grabbing important hardware information required to create a digital fingerprint. Using various different methods which are harder to manipulate either due to their complexity in managing data or due to using various under documented subsystems.
 <br>
-The issue with grabbing hardware from windows as a usermode program is just how easy it is to manipulate the hardware values as you're at the mercy of subsystems, drivers and various interfaces. So we want to raise the barrier for anti platform shenanigans.
+The issue with grabbing hardware from windows as a usermode program is just how easy it is to manipulate the hardware values as you're at the mercy of subsystems, drivers and various interfaces. We want to raise the barrier for anti platform shenanigans.
 
 ## Images
+<p align="left">
+  <img src="./Images/1.png"
+    style="width: 85%;" />
+</p>
 
 ## Features
 * CPU
